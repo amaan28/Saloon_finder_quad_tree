@@ -1,0 +1,321 @@
+//Implementation of Quad Tree
+class CellTower {
+    int x;
+    int y;
+    int cost;
+
+    public CellTower(int x, int y, int cost) {
+        this.x = x;
+        this.y = y;
+        this.cost = cost;
+    }
+
+    public double distance(int x, int y) {
+        // TO be completed by students
+        // Make use of this in chooseCellTower in PointQuadtree.java
+        double d = Math.sqrt((this.x-x)*(this.x-x) + (this.y-y)*(this.y-y));
+        return d;
+    }
+}
+
+public class PointQuadtreeNode {
+
+    public CellTower celltower;
+    public PointQuadtreeNode[] quadrants;
+
+    public PointQuadtreeNode(CellTower a) {
+        this.celltower = a;
+        this.quadrants = new PointQuadtreeNode[4];
+    }
+
+}
+//Saloon Finder code
+ class CellTower {
+    int x;
+    int y;
+    int cost;
+
+    public CellTower(int x, int y, int cost) {
+        this.x = x;
+        this.y = y;
+        this.cost = cost;
+    }
+
+    public double distance(int x, int y) {
+        // TO be completed by students
+        // Make use of this in chooseCellTower in PointQuadtree.java
+        double d = Math.sqrt((this.x-x)*(this.x-x) + (this.y-y)*(this.y-y));
+        return d;
+    }
+}
+
+public class PointQuadtreeNode {
+
+    public CellTower celltower;
+    public PointQuadtreeNode[] quadrants;
+
+    public PointQuadtreeNode(CellTower a) {
+        this.celltower = a;
+        this.quadrants = new PointQuadtreeNode[4];
+    }
+
+}
+
+import java.util.Queue;
+
+public class PointQuadtree {
+
+    enum Quad {
+        NW,
+        NE,
+        SW,
+        SE
+    }
+
+    public PointQuadtreeNode root;
+
+    public PointQuadtree() {
+        this.root = null;
+    }
+
+    public boolean insert(CellTower a) {
+        // System.out.println("Insert ("+a.x+","+a.y+")"+" of cost "+a.cost);
+        // TO be completed by students
+        PointQuadtreeNode temp = new PointQuadtreeNode(a);
+        if (this.root == null) {
+            this.root = temp;
+            return true;
+        }
+
+        PointQuadtreeNode cur = this.root;
+        while (true) {
+            if (a.x > cur.celltower.x) {
+                if (a.y > cur.celltower.y) {
+                    if (cur.quadrants[Quad.NE.ordinal()] == null) {
+                        cur.quadrants[Quad.NE.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.NE.ordinal()];
+                }
+                else if (a.y < cur.celltower.y) {
+                    if (cur.quadrants[Quad.SE.ordinal()] == null) {
+                        cur.quadrants[Quad.SE.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.SE.ordinal()];
+                }
+                else {
+                    if (cur.quadrants[Quad.SE.ordinal()] == null) {
+                        cur.quadrants[Quad.SE.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.SE.ordinal()];
+                }
+            }
+            else if (a.x < cur.celltower.x) {
+                if (a.y > cur.celltower.y) {
+                    if (cur.quadrants[Quad.NW.ordinal()] == null) {
+                        cur.quadrants[Quad.NW.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.NW.ordinal()];
+                }
+                else if (a.y < cur.celltower.y) {
+                    if (cur.quadrants[Quad.SW.ordinal()] == null) {
+                        cur.quadrants[Quad.SW.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.SW.ordinal()];
+                }
+                else {
+                    if (cur.quadrants[Quad.NW.ordinal()] == null) {
+                        cur.quadrants[Quad.NW.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.NW.ordinal()];
+                }
+            }
+            else if (a.x == cur.celltower.x) {
+                if (a.y > cur.celltower.y) {
+                    if (cur.quadrants[Quad.NE.ordinal()] == null) {
+                        cur.quadrants[Quad.NE.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.NE.ordinal()];
+                }
+                else if (a.y < cur.celltower.y) {
+                    if (cur.quadrants[Quad.SW.ordinal()] == null) {
+                        cur.quadrants[Quad.SW.ordinal()] = temp;
+                        return true;
+                    }
+                    else cur = cur.quadrants[Quad.SW.ordinal()];
+                }
+                else return false;
+            }
+        }
+    }
+
+    public boolean cellTowerAt(int x, int y) {
+        // System.out.println("Cell tower at ("+x+","+y+")");
+        // TO be completed by students
+        PointQuadtreeNode cur = this.root;
+        while (true) {
+            if (cur.celltower.x == x && cur.celltower.y == y) return true;
+            if (cur.celltower.x < x) {
+                if (cur.celltower.y < y) {
+                    if (cur.quadrants[Quad.NE.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.NE.ordinal()];
+                }
+                else if (cur.celltower.y > y) {
+                    if (cur.quadrants[Quad.SE.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.SE.ordinal()];
+                }
+                else {
+                    if (cur.quadrants[Quad.SE.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.SE.ordinal()];
+                }
+            }
+            else if (cur.celltower.x > x) {
+                if (cur.celltower.y < y) {
+                    if (cur.quadrants[Quad.NW.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.NW.ordinal()];
+                }
+                else if (cur.celltower.y > y) {
+                    if (cur.quadrants[Quad.SW.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.SW.ordinal()];
+                }
+                else {
+                    if (cur.quadrants[Quad.NW.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.NW.ordinal()];
+                }
+            }
+            else {
+                if (cur.celltower.y < y) {
+                    if (cur.quadrants[Quad.NE.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.NE.ordinal()];
+                }
+                else {
+                    if (cur.quadrants[Quad.SW.ordinal()] == null) return false;
+                    else cur = cur.quadrants[Quad.SW.ordinal()];
+                }
+            }
+        }
+    }
+
+    private double my_distance(PointQuadtreeNode p, int x, int y) {
+        if (p == null) return -1;
+        double d = p.celltower.distance(x, y);
+        return d;
+    }
+
+    private void my_add(Queue<PointQuadtreeNode> q, PointQuadtreeNode node) {
+        if (node != null) q.add(node);
+    }
+
+    public CellTower chooseCellTower(int x, int y, int r) {
+        // System.out.println("Choose cell tower at ("+x+","+y+")"+" of radius "+r);
+        // TO be completed by students
+        PointQuadtreeNode cur = this.root;
+        CellTower res = null;
+        Queue<PointQuadtreeNode> q = new LinkedList<>();
+        my_add(q, cur);
+
+        while (!q.isEmpty()) {
+            cur = q.remove();
+
+            // condition for updation of resultant cell tower based on its minimum cost
+            if (my_distance(cur, x, y) <= r && my_distance(cur, x, y) != -1) {
+                if (res == null) res = cur.celltower;
+                else if (my_distance(cur, x, y) < res.cost) res = cur.celltower;
+            }
+
+            //checking which children are to be tested next for possible candidate
+
+            if (cur.celltower.x > x && cur.celltower.y <= y) {          //Go NW
+                if (x+r <= cur.celltower.x ) {
+                    if (y-r >= cur.celltower.y) my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                    }
+                }
+                else {
+                    if (y-r >= cur.celltower.y) {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                    }
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+            }
+            else if (cur.celltower.x <= x && cur.celltower.y < y) {     //Go NE
+                if (x-r >= cur.celltower.x) {
+                    if (y-r >= cur.celltower.y) my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                    else {
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+                else {
+                    if (y-r >= cur.celltower.y) {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                    }
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+            }
+            else if (cur.celltower.x < x && cur.celltower.y >= y) {     //Go SE
+                if (x-r >= cur.celltower.x) {
+                    if (y+r <= cur.celltower.y) my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    else {
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+                else {
+                    if (y+r <= cur.celltower.y) {
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+            }
+            else if (cur.celltower.x >= x && cur.celltower.y > y) {     //Go SW
+                if (x+r <= cur.celltower.x) {
+                    if (y+r <= cur.celltower.y) my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                    }
+                }
+                else {
+                    if (y+r <= cur.celltower.y) {
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                    else {
+                        my_add(q,cur.quadrants[Quad.NW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.NE.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SW.ordinal()]);
+                        my_add(q,cur.quadrants[Quad.SE.ordinal()]);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
